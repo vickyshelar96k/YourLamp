@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Lamp - Complaint Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/index.css">
+    <link href="https://fonts.cdnfonts.com/css/algeria" rel="stylesheet">
+</head>
+<body style="background-color: black;">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container nav-height">
+            <a href=""><img class="img-logo" src="../Assets/Logo.jpg" alt=""></a> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a class="navbar-brand your-lamp" href="#"><i class="fas fa-lightbulb"></i> Your Lamp</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#report">Report Issue</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#stats">Statistics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#track">Track Complaint</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#track">Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section d-flex align-items-center" style="background: url('https://miro.medium.com/v2/resize:fit:1400/1*bF6ZGp3iQTW3sma2Yzk5wA.jpeg'); background-size: cover;">
+        <div class="container text-center ">
+            <h1 class="display-4 mb-4 text-home">Report Street Lamp Issues Instantly</h1>
+            <p class="lead mb-4 " style="font-size: 30px; font-family: 'Times New Roman', Times, serif;">Scan, Report, and Track - Making our streets safer together</p>
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h3 class="counter" data-target="1245">0</h3>
+                            <p style="font-size: 30px; font-family: 'Times New Roman', Times, serif;">Total Complaints</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h3 class="counter" data-target="1089">0</h3>
+                            <p style="font-size: 30px; font-family: 'Times New Roman', Times, serif;">Resolved Issues</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-5">
+        <div class="container" style="border: 3px dashed white; color: white;">
+            <h2 class="text-center mb-4 mt-3 ">How It Works</h2>
+            <hr>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="how-it-works-step">
+                        <div class="step-number">1</div>
+                        <h4>Locate the QR Code</h4>
+                        <p>Find the QR code on the street lamp or electrical pole that needs attention.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="how-it-works-step">
+                        <div class="step-number">2</div>
+                        <h4>Scan & Report</h4>
+                        <p>Scan the QR code, take a photo of the issue, and provide a brief description.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="how-it-works-step">
+                        <div class="step-number">3</div>
+                        <h4>Track Progress</h4>
+                        <p>Get updates on the repair progress through your unique complaint ID.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Report Section -->
+        <div class="container">
+            <h2 class="text-center mb-5 text-light" style="background-color:darkred; height: 50px; font-family: 'Times New Roman', Times, serif; font-size: 40px;">Report an Issue ?</h2>
+            <div class="complaint-form">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="complaintForm" style="font-family: 'Times New Roman', Times, serif; font-size: 20px;">
+                            <div class="mb-3">
+                                <label class="form-label"><b>Pole ID</b> (Auto-filled from QR)</label>
+                                <input type="text" class="form-control" id="poleId" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><b>Upload Image</b></label>
+                                <input type="file" class="form-control" accept="image/*" capture="environment">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><b>Issue Description</b></label>
+                                <textarea class="form-control" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><b>Your Contact Information</b></label>
+                                <input type="tel" class="form-control" placeholder="Phone Number" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="font-size: 20px;"><b>Submit Complaint</b></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="stats" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5 text-light bg-success" style="height: 50px; font-family: 'Times New Roman', Times, serif; font-size: 40px;">Complaint Statistics</h2>
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card ">
+                        <div class="card-body statistics">
+                            <h5 class="new-today">New Today</h5>
+                            <h3 class="counter new-today" data-target="23">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body statistics">
+                            <h5 class="in-progress">In Progress</h5>
+                            <h3 class="counter in-progress" data-target="156">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body statistics">
+                            <h5 class="resolved-today">Resolved Today</h5>
+                            <h3 class="counter resolved-today" data-target="18">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body statistics">
+                            <h5 class="avg-resp-time">Avg Response Time</h5>
+                            <h3 class="avg-resp-time">24hrs</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body" style="background: linear-gradient(to right, #1a1a1a, #3a3a3a);">
+                            <h5 class="card-title text-light">Recent Complaints</h5>
+                            <div class="recent-complaints">
+                                <div class="complaint-item p-3 text-light" >
+                                    <h6>Pole ID: STL-1234</h6>
+                                    <p class="text-light">Reported: 2 hours ago</p>
+                                    <p>Street light not working since yesterday</p>
+                                </div>
+                                <hr class="text-light">
+                                <div class="complaint-item resolved p-3 text-light">
+                                    <h6>Pole ID: STL-1235</h6>
+                                    <p class="text-light">Resolved: 1 hour ago</p>
+                                    <p>Electrical wire hanging loose</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Issue Locations</h5>
+                            <div id="map"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3767.9967172183424!2d72.87263147498055!3d19.19534573203395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b76b4ad6be5f%3A0x7b9dedb4e47c6a64!2sAnita%20Vihar%2C%20Kandivali%2C%20MHADA%20Colony%2C%20Lokhandwala%20Twp%2C%20Kandivali%20East%2C%20Mumbai%2C%20Maharashtra%20400101!5e0!3m2!1sen!2sin!4v1736016859638!5m2!1sen!2sin" width="600" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container">
+            
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <a href=""><h1 style="color: gold;"><i class="fas fa-lightbulb"></i> Your Lamp</h1></a>
+                    <p style="font-size: 18px;">Mapping and reporting street problems to the councils responsible for fixing them – anywhere in the INDIA.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 mt-2">
+                    <ul class="list-unstyled ">
+                        <li><a href="">Report a Problem</a></li>
+                        <li><a href="">Your Reports</a></li>
+                        <li><a href="">All Reports</a></li>
+                        <li><a href="">Local Alerts</a></li>
+                        <li><a href="">Help</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mt-2">
+                    <ul class="list-unstyled">
+                        <li><a href="">Your Lamp Pro</a></li>
+                        <li><a href="">Promotional material</a></li>
+                        <li><a href="">Press</a></li>
+                        <li><a href="">Contact</a></li>
+                        <li><a href="">Privacy</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <p>We are a charity – donate today to invest in safer, more accessible communities</p>
+                    <button type="button" class="btn btn-warning">Donate Now <i class="fa-solid fa-heart" style="color: #FFD43B;"></i></button>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <h5>Download Our App</h5>
+                    <button class="btn btn-light me-2">
+                        <i class="fab fa-google-play"></i> Google Play
+                    </button>
+                    <button class="btn btn-light">
+                        <i class="fab fa-apple"></i> App Store
+                    </button>
+                </div>
+                <div class="col-lg-3"><a href="">Developer : Shelar Vikas Balaji</a></div>
+            </div>
+        </div>
+    </footer>
+
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Counter Animation
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            const increment = target / 200;
+            
+            const updateCounter = () => {
+                const count = +counter.innerText;
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(updateCounter, 1);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            
+            updateCounter();
+        });
+
+        // Form Submission Handler
+        document.getElementById('complaintForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Complaint submitted successfully! Your complaint ID is: ' + Math.random().toString(36).substr(2, 9).toUpperCase());
+        });
+
+        // Simulated QR Code Detection
+        function simulateQRScan() {
+            document.getElementById('poleId').value = 'STL-' + Math.floor(Math.random() * 10000);
+        }
+
+        // Initialize map placeholder
+        function initMap() {
+            // Map initialization code would go here
+            console.log('Map initialized');
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
