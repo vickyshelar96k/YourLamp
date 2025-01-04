@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Lamp - User Profile</title>
+    <link rel="stylesheet" href="../CSS/profile.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Your Lamp</h1>
+            <div class="flex items-center space-x-4">
+                <span class="font-medium">Welcome, Vikas Shelar</span>
+                <button class="bg-blue-500 px-4 py-2 rounded hover:bg-blue-700">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-8 px-4">
+        <!-- Profile Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="col-span-1">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex flex-col items-center">
+                        <img src="../Assets/VikasProfile.jpg" alt="Profile Picture" class="rounded-full mb-4 img-prof">
+                        <h2 class="text-xl font-bold">Vikas Shelar</h2>
+                        <p class="text-gray-600">ID: YL123456</p>
+                        <div class="mt-4 bg-blue-100 rounded-full px-4 py-2">
+                            <span class="text-blue-800 font-semibold">500 Reward Points</span>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <h3 class="font-semibold mb-2">Contact Information</h3>
+                        <p class="text-gray-600">Email: vikasshelar369@gmail.com</p>
+                        <p class="text-gray-600">Phone: +91 23456 78900</p>
+                        <p class="text-gray-600">Area: Kandivali (East), Mumbai</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-1 md:col-span-2">
+                <!-- Complaint History -->
+                <div class="bg-white rounded-lg shadow p-6 mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">Complaint History</h2>
+                        <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                            New Complaint
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-semibold">Street Light Malfunction</h3>
+                                    <p class="text-sm text-gray-600">Location: 123 Main Street</p>
+                                    <p class="text-sm text-gray-500">Reported on: Jan 2, 2025</p>
+                                </div>
+                                <span class="bg-yellow-100 text-yellow-800 text-sm px-3 py-1 rounded-full">In Progress</span>
+                            </div>
+                            <p class="mt-2 text-gray-700">Light flickering continuously during night hours.</p>
+                        </div>
+
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-semibold">Broken Lamp Post</h3>
+                                    <p class="text-sm text-gray-600">Location: 456 Park Avenue</p>
+                                    <p class="text-sm text-gray-500">Reported on: Dec 28, 2024</p>
+                                </div>
+                                <span class="bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full">Resolved</span>
+                            </div>
+                            <p class="mt-2 text-gray-700">Lamp post damaged due to vehicle collision.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rewards Section -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">Rewards & Benefits</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border rounded-lg p-4">
+                            <h3 class="font-semibold text-lg mb-2">Available Benefits</h3>
+                            <ul class="space-y-2">
+                                <li class="flex items-center justify-between">
+                                    <span>Park Maintenance Fee Waiver</span>
+                                    <span class="text-blue-600">200 points</span>
+                                </li>
+                                <li class="flex items-center justify-between">
+                                    <span>Community Center Access</span>
+                                    <span class="text-blue-600">300 points</span>
+                                </li>
+                                <li class="flex items-center justify-between">
+                                    <span>Municipal Swimming Pool Pass</span>
+                                    <span class="text-blue-600">400 points</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="border rounded-lg p-4">
+                            <h3 class="font-semibold text-lg mb-2">Recent Rewards</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <span>Complaint #YL789 Verified</span>
+                                    <span class="text-green-600">+100 points</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Complaint #YL790 Verified</span>
+                                    <span class="text-green-600">+100 points</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
