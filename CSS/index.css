@@ -120,3 +120,7 @@ a{
     font-size: 18px;
     font-weight: 400;
 }
+.map-show{
+    display: flex;
+    justify-content: center;
+}

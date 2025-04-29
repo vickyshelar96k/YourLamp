@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street Light Management Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary);
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            padding: 12px 25px;
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+        
+        .section {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .qr-code-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+        }
+        
+        tr:hover {
+            background-color: #f5f7fa;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: #ffecb3;
+            color: #e6a700;
+        }
+        
+        .status-assigned {
+            background-color: #bbdefb;
+            color: #1976d2;
+        }
+        
+        .status-completed {
+            background-color: #c8e6c9;
+            color: #388e3c;
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-card h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .preview-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .badge-primary {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .qr-code-preview {
+            border: 1px solid #ddd;
+            padding: 10px;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        
+        #printQrSection {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        #printQrSection h3 {
+            margin-bottom: 10px;
+        }
+        
+        .pole-details {
+            text-align: left;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Street Light</h2>
+                <p>Admin Dashboard</p>
+            </div>
+            <div class="sidebar-nav">
+                <a class="nav-item active" data-section="dashboard">Dashboard</a>
+                <a class="nav-item" data-section="generate-qr">Generate QR Code</a>
+                <a class="nav-item" data-section="manage-poles">Manage Poles</a>
+                <a class="nav-item" data-section="complaints">Complaints</a>
+                <a class="nav-item" data-section="assign-tasks">Assign Tasks</a>
+                <a class="nav-item" data-section="reports">Reports</a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div class="section active" id="dashboard">
+                <h2>Dashboard Overview</h2>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Total Poles</h3>
+                        <div class="number">248</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pending Complaints</h3>
+                        <div class="number">15</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Assigned Tasks</h3>
+                        <div class="number">8</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Resolved This Week</h3>
+                        <div class="number">24</div>
+                    </div>
+                </div>
+                
+                <h3>Recent Complaints</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Pole ID</th>
+                            <th>Issue</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>C-1043</td>
+                            <td>SL-102</td>
+                            <td>Bulb not working</td>
+                            <td>Main Street, Block A</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                            <td>Apr 28, 2025</td>
+                        </tr>
+                        <tr>
+                            <td>C-1042</td>
+                            <td>SL-087</td>
+                            <td>Voltage fluctuation</td>
+                            <td>Park Avenue, Block C</td>
+                            <td><span class="status status-assigned">Assigned</span></td>
+                            <td>Apr 27, 2025</td>
+                        </tr>
+                        <tr>
+                            <td>C-1041</td>
+                            <td>SL-156</td>
+                            <td>Wiring issue</td>
+                            <td>Central Road, Block D</td>
+                            <td><span class="status status-completed">Completed</span></td>
+                            <td>Apr 26, 2025</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Generate QR Section -->
+            <div class="section" id="generate-qr">
+                <h2>Generate QR Code</h2>
+                <div class="form-group">
+                    <label for="poleId">Pole ID</label>
+                    <input type="text" id="poleId" placeholder="Enter unique pole ID">
+                </div>
+                <div class="form-group">
+                    <label for="poleArea">Area</label>
+                    <input type="text" id="poleArea" placeholder="Enter area">
+                </div>
+                <div class="form-group">
+                    <label for="poleLocation">Location</label>
+                    <input type="text" id="poleLocation" placeholder="Enter specific location">
+                </div>
+                <div class="form-group">
+                    <label for="poleManufactured">Manufactured By</label>
+                    <input type="text" id="poleManufactured" placeholder="Enter manufacturer name">
+                </div>
+                <div class="form-group">
+                    <label for="poleManufactureDate">Manufacturing Date</label>
+                    <input type="date" id="poleManufactureDate">
+                </div>
+                <div class="form-group">
+                    <label for="poleStartDate">Starting Date</label>
+                    <input type="date" id="poleStartDate">
+                </div>
+                <div class="form-group">
+                    <label for="poleLastMaintenance">Last Maintenance Date</label>
+                    <input type="date" id="poleLastMaintenance">
+                </div>
+                <button id="generateQrBtn">Generate QR Code</button>
+                
+                <div class="qr-code-container">
+                    <div id="qrCode"></div>
+                    <div id="qrDetails" style="display:none; margin-top: 15px;">
+                        <button id="printQrBtn" class="btn-success">Print QR Code</button>
+                        <button id="saveQrBtn">Save Pole Details</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Manage Poles Section -->
+            <div class="section" id="manage-poles">
+                <h2>Manage Street Light Poles</h2>
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="searchPole" placeholder="Search for pole ID, area, location..." style="width: 70%; display: inline-block;">
+                    <button style="width: 28%; margin-left: 2%;">Search</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pole ID</th>
+                            <th>Area</th>
+                            <th>Location</th>
+                            <th>Manufacturing Date</th>
+                            <th>Last Maintenance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SL-101</td>
+                            <td>North District</td>
+                            <td>Main Street, Block A</td>
+                            <td>Jan 15, 2023</td>
+                            <td>Mar 10, 2025</td>
+                            <td class="action-buttons">
+                                <button class="btn-view-pole">View</button>
+                                <button class="btn-edit-pole">Edit</button>
+                                <button class="btn-qr-pole">QR</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SL-102</td>
+                            <td>North District</td>
+                            <td>Main Street, Block B</td>
+                            <td>Jan 15, 2023</td>
+                            <td>Feb 22, 2025</td>
+                            <td class="action-buttons">
+                                <button class="btn-view-pole">View</button>
+                                <button class="btn-edit-pole">Edit</button>
+                                <button class="btn-qr-pole">QR</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SL-087</td>
+                            <td>West District</td>
+                            <td>Park Avenue, Block C</td>
+                            <td>Nov 05, 2022</td>
+                            <td>Apr 15, 2025</td>
+                            <td class="action-buttons">
+                                <button class="btn-view-pole">View</button>
+                                <button class="btn-edit-pole">Edit</button>
+                                <button class="btn-qr-pole">QR</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Complaints Section -->
+            <div class="section" id="complaints">
+                <h2>Manage Complaints</h2>
+                <div style="margin-bottom: 20px;">
+                    <select id="complaintFilter" style="width: 30%; display: inline-block;">
+                        <option value="all">All Complaints</option>
+                        <option value="pending">Pending</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                    <input type="text" id="searchComplaint" placeholder="Search complaints..." style="width: 40%; display: inline-block; margin-left: 2%;">
+                    <button style="width: 26%; margin-left: 2%;">Search</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Pole ID</th>
+                            <th>Issue</th>
+                            <th>Reported On</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>C-1043</td>
+                            <td>SL-102</td>
+                            <td>Bulb not working</td>
+                            <td>Apr 28, 2025</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                            <td class="action-buttons">
+                                <button class="btn-view-complaint">View</button>
+                                <button class="btn-assign">Assign</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>C-1042</td>
+                            <td>SL-087</td>
+                            <td>Voltage fluctuation</td>
+                            <td>Apr 27, 2025</td>
+                            <td><span class="status status-assigned">Assigned</span></td>
+                            <td class="action-buttons">
+                                <button class="btn-view-complaint">View</button>
+                                <button class="btn-track">Track</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>C-1041</td>
+                            <td>SL-156</td>
+                            <td>Wiring issue</td>
+                            <td>Apr 26, 2025</td>
+                            <td><span class="status status-completed">Completed</span></td>
+                            <td class="action-buttons">
+                                <button class="btn-view-complaint">View</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Assign Tasks Section -->
+            <div class="section" id="assign-tasks">
+                <h2>Assign Tasks to Workers</h2>
+                <div class="form-group">
+                    <label for="complaintSelect">Select Complaint</label>
+                    <select id="complaintSelect">
+                        <option value="">-- Select Complaint --</option>
+                        <option value="C-1043">C-1043 - SL-102 - Bulb not working</option>
+                        <option value="C-1042">C-1042 - SL-087 - Voltage fluctuation</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="workerSelect">Assign to Worker</label>
+                    <select id="workerSelect">
+                        <option value="">-- Select Worker --</option>
+                        <option value="W-001">John Smith - Electrician</option>
+                        <option value="W-002">David Williams - Maintenance</option>
+                        <option value="W-003">Michael Brown - Electrician</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="prioritySelect">Priority</label>
+                    <select id="prioritySelect">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="assignNotes">Additional Notes</label>
+                    <textarea id="assignNotes" rows="4" placeholder="Enter any additional information for the worker..."></textarea>
+                </div>
+                <button id="assignTaskBtn">Assign Task</button>
+                
+                <h3 style="margin-top: 30px;">Current Assignments</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Task ID</th>
+                            <th>Complaint</th>
+                            <th>Assigned To</th>
+                            <th>Assigned On</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>T-501</td>
+                            <td>C-1042</td>
+                            <td>John Smith</td>
+                            <td>Apr 27, 2025</td>
+                            <td><span class="badge badge-primary">Medium</span></td>
+                            <td><span class="status status-assigned">In Progress</span></td>
+                            <td class="action-buttons">
+                                <button class="btn-view-task">View</button>
+                                <button class="btn-remind">Remind</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Reports Section -->
+            <div class="section" id="reports">
+                <h2>Reports & Analytics</h2>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Average Resolution Time</h3>
+                        <div class="number">1.8 days</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Most Common Issue</h3>
+                        <div class="number">Bulb Failure</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Area with Most Issues</h3>
+                        <div class="number">North District</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Worker Efficiency</h3>
+                        <div class="number">92%</div>
+                    </div>
+                </div>
+                
+                <h3>Monthly Complaint Statistics</h3>
+                <div style="background: white; height: 250px; border-radius: 5px; display: flex; justify-content: center; align-items: center; margin: 20px 0;">
+                    <p>Chart visualization would go here</p>
+                </div>
+                
+                <div style="display: flex; gap: 20px;">
+                    <button>Export to Excel</button>
+                    <button>Generate PDF Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- View Complaint Modal -->
+    <div id="viewComplaintModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Complaint Details</h2>
+            <div class="complaint-details">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <div>
+                        <h3>Complaint ID: <span id="modalComplaintId">C-1043</span></h3>
+                        <p>Status: <span class="status status-pending">Pending</span></p>
+                    </div>
+                    <div>
+                        <p>Reported on: <span id="modalComplaintDate">Apr 28, 2025</span></p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; margin-bottom: 20px;">
+                    <div style="flex: 1;">
+                        <h4>Pole Information</h4>
+                        <p><strong>Pole ID:</strong> <span id="modalPoleId">SL-102</span></p>
+                        <p><strong>Location:</strong> <span id="modalPoleLocation">Main Street, Block A</span></p>
+                        <p><strong>Area:</strong> <span id="modalPoleArea">North District</span></p>
+                    </div>
+                    <div style="flex: 1;">
+                        <h4>Issue Details</h4>
+                        <p><strong>Issue Type:</strong> <span id="modalIssueType">Bulb not working</span></p>
+                        <p><strong>Description:</strong> <span id="modalIssueDesc">The street light is completely off at night. Appears to be a bulb failure.</span></p>
+                    </div>
+                </div>
+                
+                <h4>Reported Images</h4>
+                <div style="display: flex; margin: 10px 0;">
+                    <img class="preview-image" src="/api/placeholder/100/100" alt="Issue photo">
+                    <img class="preview-image" src="/api/placeholder/100/100" alt="Issue photo">
+                </div>
+                
+                <div style="margin-top: 20px; text-align: right;">
+                    <button class="btn-assign">Assign to Worker</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- QR Code Print Modal -->
+    <div id="printModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="printQrSection">
+                <h3>Street Light Pole QR Code</h3>
+                <div id="printQrCode"></div>
+                <div class="pole-details">
+                    <p><strong>Pole ID:</strong> <span id="printPoleId"></span></p>
+                    <p><strong>Location:</strong> <span id="printPoleLocation"></span></p>
+                    <p><strong>Area:</strong> <span id="printPoleArea"></span></p>
+                    <p><strong>Last Maintenance:</strong> <span id="printPoleMaintenance"></span></p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="actualPrintBtn">Print</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all items
+                document.querySelectorAll('.nav-item').forEach(navItem => {
+                    navItem.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Hide all sections
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show corresponding section
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+        
+        // QR Code generation
+        const generateQrBtn = document.getElementById('generateQrBtn');
+        const qrCodeDiv = document.getElementById('qrCode');
+        const qrDetails = document.getElementById('qrDetails');
+        const printQrBtn = document.getElementById('printQrBtn');
+        const saveQrBtn = document.getElementById('saveQrBtn');
+        const printModal = document.getElementById('printModal');
+        const closePrintModal = printModal.querySelector('.close');
+        const actualPrintBtn = document.getElementById('actualPrintBtn');
+        
+        // Store pole data
+        let poleData = [];
+        
+        generateQrBtn.addEventListener('click', function() {
+            const poleId = document.getElementById('poleId').value;
+            const poleArea = document.getElementById('poleArea').value;
+            const poleLocation = document.getElementById('poleLocation').value;
+            const poleManufactured = document.getElementById('poleManufactured').value;
+            const poleManufactureDate = document.getElementById('poleManufactureDate').value;
+            const poleStartDate = document.getElementById('poleStartDate').value;
+            const poleLastMaintenance = document.getElementById('poleLastMaintenance').value;
+            
+            if (!poleId || !poleArea || !poleLocation) {
+                alert('Please fill in at least Pole ID, Area, and Location fields');
+                return;
+            }
+            
+            // Create data object
+            const data = {
+                poleId,
+                poleArea,
+                poleLocation,
+                poleManufactured,
+                poleManufactureDate,
+                poleStartDate,
+                poleLastMaintenance
+            };
+            
+            // Clear previous QR code
+            qrCodeDiv.innerHTML = '';
+            
+            // Generate QR code
+            const qrCode = new QRCode(qrCodeDiv, {
+                text: JSON.stringify(data),
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // Display options
+            qrDetails.style.display = 'block';
+            
+            // Update print modal fields
+            document.getElementById('printPoleId').textContent = poleId;
+            document.getElementById('printPoleLocation').textContent = poleLocation;
+            document.getElementById('printPoleArea').textContent = poleArea;
+            document.getElementById('printPoleMaintenance').textContent = 
+                poleLastMaintenance ? new Date(poleLastMaintenance).toLocaleDateString() : 'N/A';
+                
+            // Generate QR code in print modal
+            document.getElementById('printQrCode').innerHTML = '';
+            new QRCode(document.getElementById('printQrCode'), {
+                text: JSON.stringify(data),
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        });
+        
+        // Save pole data
+        saveQrBtn.addEventListener('click', function() {
+    const poleId = document.getElementById('poleId').value;
+    const poleArea = document.getElementById('poleArea').value;
+    const poleLocation = document.getElementById('poleLocation').value;
+    const poleManufactured = document.getElementById('poleManufactured').value;
+    const poleManufactureDate = document.getElementById('poleManufactureDate').value;
+    const poleStartDate = document.getElementById('poleStartDate').value;
+    const poleLastMaintenance = document.getElementById('poleLastMaintenance').value;
+    
+    // Create data object
+    const newPole = {
+        poleId,
+        poleArea,
+        poleLocation,
+        poleManufactured,
+        poleManufactureDate: poleManufactureDate ? new Date(poleManufactureDate).toLocaleDateString() : 'N/A',
+        poleStartDate: poleStartDate ? new Date(poleStartDate).toLocaleDateString() : 'N/A',
+        poleLastMaintenance: poleLastMaintenance ? new Date(poleLastMaintenance).toLocaleDateString() : 'N/A'
+    };
+    
+    // In a real application, this would send data to a server
+    // For demonstration, we'll just store it locally
+    poleData.push(newPole);
+    
+    // Update the poles table
+    updatePolesTable();
+    
+    alert('Pole data has been saved successfully!');
+    
+    // Clear form fields
+    document.getElementById('poleId').value = '';
+    document.getElementById('poleArea').value = '';
+    document.getElementById('poleLocation').value = '';
+    document.getElementById('poleManufactured').value = '';
+    document.getElementById('poleManufactureDate').value = '';
+    document.getElementById('poleStartDate').value = '';
+    document.getElementById('poleLastMaintenance').value = '';
+    
+    // Clear QR code
+    qrCodeDiv.innerHTML = '';
+    qrDetails.style.display = 'none';
+});
+
+// Function to update poles table
+function updatePolesTable() {
+    const polesTableBody = document.querySelector('#manage-poles table tbody');
+    
+    // Clear existing rows
+    polesTableBody.innerHTML = '';
+    
+    // Add saved poles
+    poleData.forEach(pole => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td>${pole.poleId}</td>
+            <td>${pole.poleArea}</td>
+            <td>${pole.poleLocation}</td>
+            <td>${pole.poleManufactureDate}</td>
+            <td>${pole.poleLastMaintenance}</td>
+            <td class="action-buttons">
+                <button class="btn-view-pole" data-pole-id="${pole.poleId}">View</button>
+                <button class="btn-edit-pole" data-pole-id="${pole.poleId}">Edit</button>
+                <button class="btn-qr-pole" data-pole-id="${pole.poleId}">QR</button>
+            </td>
+        `;
+        
+        polesTableBody.appendChild(row);
+    });
+    
+    // Attach event listeners to new buttons
+    attachPoleBtnEventListeners();
+}
+
+// Function to attach event listeners to pole buttons
+function attachPoleBtnEventListeners() {
+    document.querySelectorAll('.btn-view-pole').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const poleId = this.getAttribute('data-pole-id');
+            // Find pole data by ID
+            const pole = poleData.find(p => p.poleId === poleId) || 
+                          {poleId: 'Not found', poleArea: 'N/A', poleLocation: 'N/A'};
+            
+            alert(`Pole ID: ${pole.poleId}\nArea: ${pole.poleArea}\nLocation: ${pole.poleLocation}`);
+            // In a real app, this would open a modal with full details
+        });
+    });
+    
+    document.querySelectorAll('.btn-edit-pole').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const poleId = this.getAttribute('data-pole-id');
+            // In a real app, this would populate a form with the pole data for editing
+            alert(`Edit functionality would be implemented for Pole ID: ${poleId}`);
+        });
+    });
+    
+    document.querySelectorAll('.btn-qr-pole').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const poleId = this.getAttribute('data-pole-id');
+            const pole = poleData.find(p => p.poleId === poleId);
+            
+            if (pole) {
+                // Populate print modal fields
+                document.getElementById('printPoleId').textContent = pole.poleId;
+                document.getElementById('printPoleLocation').textContent = pole.poleLocation;
+                document.getElementById('printPoleArea').textContent = pole.poleArea;
+                document.getElementById('printPoleMaintenance').textContent = pole.poleLastMaintenance;
+                
+                // Generate QR code in print modal
+                document.getElementById('printQrCode').innerHTML = '';
+                new QRCode(document.getElementById('printQrCode'), {
+                    text: JSON.stringify(pole),
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                // Show the print modal
+                printModal.style.display = 'flex';
+            }
+        });
+    });
+}
+
+// Initialize complaint data
+const complaintData = [
+    {
+        id: 'C-1043',
+        poleId: 'SL-102',
+        issue: 'Bulb not working',
+        location: 'Main Street, Block A',
+        area: 'North District',
+        status: 'pending',
+        date: 'Apr 28, 2025',
+        description: 'The street light is completely off at night. Appears to be a bulb failure.',
+        images: ['/api/placeholder/100/100', '/api/placeholder/100/100']
+    },
+    {
+        id: 'C-1042',
+        poleId: 'SL-087',
+        issue: 'Voltage fluctuation',
+        location: 'Park Avenue, Block C',
+        area: 'West District',
+        status: 'assigned',
+        date: 'Apr 27, 2025',
+        description: 'Light keeps flickering on and off. Possible voltage fluctuation issue.',
+        images: ['/api/placeholder/100/100']
+    },
+    {
+        id: 'C-1041',
+        poleId: 'SL-156',
+        issue: 'Wiring issue',
+        location: 'Central Road, Block D',
+        area: 'East District',
+        status: 'completed',
+        date: 'Apr 26, 2025',
+        description: 'Exposed wiring at the base of the pole. Safety hazard needs immediate attention.',
+        images: ['/api/placeholder/100/100', '/api/placeholder/100/100', '/api/placeholder/100/100']
+    }
+];
+
+// Initialize worker data
+const workerData = [
+    { id: 'W-001', name: 'John Smith', role: 'Electrician', contact: '555-1234' },
+    { id: 'W-002', name: 'David Williams', role: 'Maintenance', contact: '555-5678' },
+    { id: 'W-003', name: 'Michael Brown', role: 'Electrician', contact: '555-9012' }
+];
+
+// Tasks data
+let taskData = [
+    {
+        id: 'T-501',
+        complaintId: 'C-1042',
+        workerId: 'W-001',
+        assignedDate: 'Apr 27, 2025',
+        status: 'In Progress',
+        priority: 'Medium',
+        notes: 'Check wiring for voltage issues.'
+    }
+];
+
+// Handle Print QR Code button
+printQrBtn.addEventListener('click', function() {
+    printModal.style.display = 'flex';
+});
+
+// Close print modal
+closePrintModal.addEventListener('click', function() {
+    printModal.style.display = 'none';
+});
+
+// Handle actual print button
+actualPrintBtn.addEventListener('click', function() {
+    const printContents = document.getElementById('printQrSection').innerHTML;
+    const originalContents = document.body.innerHTML;
+    
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    
+    // Reattach event listeners after printing
+    initializeEventListeners();
+});
+
+// View Complaint Modal
+const viewComplaintModal = document.getElementById('viewComplaintModal');
+const closeComplaintModal = viewComplaintModal.querySelector('.close');
+
+// Close complaint modal
+closeComplaintModal.addEventListener('click', function() {
+    viewComplaintModal.style.display = 'none';
+});
+
+// Attach event listeners to view complaint buttons
+function attachComplaintBtnEventListeners() {
+    document.querySelectorAll('.btn-view-complaint').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // In a real app, this would get the complaint ID from the row
+            // For demonstration, we'll use the first complaint
+            const complaint = complaintData[0];
+            
+            // Populate modal fields
+            document.getElementById('modalComplaintId').textContent = complaint.id;
+            document.getElementById('modalComplaintDate').textContent = complaint.date;
+            document.getElementById('modalPoleId').textContent = complaint.poleId;
+            document.getElementById('modalPoleLocation').textContent = complaint.location;
+            document.getElementById('modalPoleArea').textContent = complaint.area;
+            document.getElementById('modalIssueType').textContent = complaint.issue;
+            document.getElementById('modalIssueDesc').textContent = complaint.description;
+            
+            // Show the modal
+            viewComplaintModal.style.display = 'flex';
+        });
+    });
+    
+    document.querySelectorAll('.btn-assign').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Close complaint modal if open
+            viewComplaintModal.style.display = 'none';
+            
+            // Switch to assign tasks section
+            document.querySelectorAll('.nav-item').forEach(navItem => {
+                navItem.classList.remove('active');
+            });
+            
+            document.querySelector('.nav-item[data-section="assign-tasks"]').classList.add('active');
+            
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById('assign-tasks').classList.add('active');
+            
+            // In a real app, this would pre-select the complaint in the dropdown
+        });
+    });
+}
+
+// Assign Task Button
+const assignTaskBtn = document.getElementById('assignTaskBtn');
+
+assignTaskBtn.addEventListener('click', function() {
+    const complaintId = document.getElementById('complaintSelect').value;
+    const workerId = document.getElementById('workerSelect').value;
+    const priority = document.getElementById('prioritySelect').value;
+    const notes = document.getElementById('assignNotes').value;
+    
+    if (!complaintId || !workerId) {
+        alert('Please select both a complaint and a worker');
+        return;
+    }
+    
+    // Create new task
+    const newTask = {
+        id: `T-${500 + taskData.length + 1}`,
+        complaintId,
+        workerId,
+        assignedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        status: 'Assigned',
+        priority,
+        notes
+    };
+    
+    // In a real app, this would send data to a server
+    // For demonstration, we'll just store it locally
+    taskData.push(newTask);
+    
+    // Update the tasks table
+    updateTasksTable();
+    
+    // Update complaint status
+    const complaintIndex = complaintData.findIndex(c => c.id === complaintId);
+    if (complaintIndex !== -1) {
+        complaintData[complaintIndex].status = 'assigned';
+        // Update complaints table
+        updateComplaintsTable();
+    }
+    
+    alert('Task assigned successfully!');
+    
+    // Clear form fields
+    document.getElementById('complaintSelect').value = '';
+    document.getElementById('workerSelect').value = '';
+    document.getElementById('prioritySelect').value = 'low';
+    document.getElementById('assignNotes').value = '';
+});
+
+// Function to update tasks table
+function updateTasksTable() {
+    const tasksTableBody = document.querySelector('#assign-tasks table tbody');
+    
+    // Clear existing rows
+    tasksTableBody.innerHTML = '';
+    
+    // Add tasks
+    taskData.forEach(task => {
+        const worker = workerData.find(w => w.id === task.workerId) || { name: 'Unknown' };
+        
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td>${task.id}</td>
+            <td>${task.complaintId}</td>
+            <td>${worker.name}</td>
+            <td>${task.assignedDate}</td>
+            <td><span class="badge badge-primary">${task.priority}</span></td>
+            <td><span class="status status-assigned">${task.status}</span></td>
+            <td class="action-buttons">
+                <button class="btn-view-task" data-task-id="${task.id}">View</button>
+                <button class="btn-remind" data-task-id="${task.id}">Remind</button>
+            </td>
+        `;
+        
+        tasksTableBody.appendChild(row);
+    });
+}
+
+// Function to update complaints table
+function updateComplaintsTable() {
+    const complaintsTableBody = document.querySelector('#complaints table tbody');
+    
+    // Clear existing rows
+    complaintsTableBody.innerHTML = '';
+    
+    // Add complaints
+    complaintData.forEach(complaint => {
+        const row = document.createElement('tr');
+        
+        let statusHtml = '';
+        let actionsHtml = '';
+        
+        if (complaint.status === 'pending') {
+            statusHtml = '<span class="status status-pending">Pending</span>';
+            actionsHtml = `
+                <button class="btn-view-complaint" data-complaint-id="${complaint.id}">View</button>
+                <button class="btn-assign" data-complaint-id="${complaint.id}">Assign</button>
+            `;
+        } else if (complaint.status === 'assigned') {
+            statusHtml = '<span class="status status-assigned">Assigned</span>';
+            actionsHtml = `
+                <button class="btn-view-complaint" data-complaint-id="${complaint.id}">View</button>
+                <button class="btn-track" data-complaint-id="${complaint.id}">Track</button>
+            `;
+        } else {
+            statusHtml = '<span class="status status-completed">Completed</span>';
+            actionsHtml = `
+                <button class="btn-view-complaint" data-complaint-id="${complaint.id}">View</button>
+            `;
+        }
+        
+        row.innerHTML = `
+            <td>${complaint.id}</td>
+            <td>${complaint.poleId}</td>
+            <td>${complaint.issue}</td>
+            <td>${complaint.date}</td>
+            <td>${statusHtml}</td>
+            <td class="action-buttons">${actionsHtml}</td>
+        `;
+        
+        complaintsTableBody.appendChild(row);
+    });
+    
+    // Attach event listeners to new buttons
+    attachComplaintBtnEventListeners();
+}
+
+// Complaint Filter
+document.getElementById('complaintFilter').addEventListener('change', function() {
+    const filterValue = this.value;
+    const complaintsTableBody = document.querySelector('#complaints table tbody');
+    
+    // Clear existing rows
+    complaintsTableBody.innerHTML = '';
+    
+    // Filter complaints
+    let filteredComplaints = complaintData;
+    if (filterValue !== 'all') {
+        filteredComplaints = complaintData.filter(c => c.status === filterValue);
+    }
+    
+    // Add filtered complaints
+    filteredComplaints.forEach(complaint => {
+        const row = document.createElement('tr');
+        
+        let statusHtml = '';
+        let actionsHtml = '';
+        
+        if (complaint.status === 'pending') {
+            statusHtml = '<span class="status status-pending">Pending</span>';
+            actionsHtml = `
+                <button class="btn-view-complaint" data-complaint-id="${complaint.id}">View</button>
+                <button class="btn-assign" data-complaint-id="${complaint.id}">Assign</button>
+            `;
+        } else if (complaint.status === 'assigned') {
+            statusHtml = '<span class="status status-assigned">Assigned</span>';
+            actionsHtml = `
+                <button class="btn-view-complaint" data-complaint-id="${complaint.id}">View</button>
+                <button class="btn-track" data-complaint-id="${complaint.id}">Track</button>
+            `;
+        } else {
+            statusHtml = '<span class="status status-completed">Completed</span>';
+            actionsHtml = `
+                <button class="btn-view-complaint" data-complaint-id="${complaint.id}">View</button>
+            `;
+        }
+        
+        row.innerHTML = `
+            <td>${complaint.id}</td>
+            <td>${complaint.poleId}</td>
+            <td>${complaint.issue}</td>
+            <td>${complaint.date}</td>
+            <td>${statusHtml}</td>
+            <td class="action-buttons">${actionsHtml}</td>
+        `;
+        
+        complaintsTableBody.appendChild(row);
+    });
+    
+    // Attach event listeners to new buttons
+    attachComplaintBtnEventListeners();
+});
+
+// Close modals when clicking outside
+window.addEventListener('click', function(event) {
+    if (event.target === printModal) {
+        printModal.style.display = 'none';
+    }
+    if (event.target === viewComplaintModal) {
+        viewComplaintModal.style.display = 'none';
+    }
+});
+
+// Function to initialize all event listeners
+function initializeEventListeners() {
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.nav-item').forEach(navItem => {
+                navItem.classList.remove('active');
+            });
+            
+            this.classList.add('active');
+            
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            const sectionId = this.getAttribute('data-section');
+            document.getElementById(sectionId).classList.add('active');
+        });
+    });
+    
+    // QR Code buttons
+    generateQrBtn.addEventListener('click', function() {
+        const poleId = document.getElementById('poleId').value;
+        const poleArea = document.getElementById('poleArea').value;
+        const poleLocation = document.getElementById('poleLocation').value;
+        const poleManufactured = document.getElementById('poleManufactured').value;
+        const poleManufactureDate = document.getElementById('poleManufactureDate').value;
+        const poleStartDate = document.getElementById('poleStartDate').value;
+        const poleLastMaintenance = document.getElementById('poleLastMaintenance').value;
+        
+        if (!poleId || !poleArea || !poleLocation) {
+            alert('Please fill in at least Pole ID, Area, and Location fields');
+            return;
+        }
+        
+        const data = {
+            poleId,
+            poleArea,
+            poleLocation,
+            poleManufactured,
+            poleManufactureDate,
+            poleStartDate,
+            poleLastMaintenance
+        };
+        
+        qrCodeDiv.innerHTML = '';
+        
+        const qrCode = new QRCode(qrCodeDiv, {
+            text: JSON.stringify(data),
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        
+        qrDetails.style.display = 'block';
+        
+        document.getElementById('printPoleId').textContent = poleId;
+        document.getElementById('printPoleLocation').textContent = poleLocation;
+        document.getElementById('printPoleArea').textContent = poleArea;
+        document.getElementById('printPoleMaintenance').textContent = 
+            poleLastMaintenance ? new Date(poleLastMaintenance).toLocaleDateString() : 'N/A';
+            
+        document.getElementById('printQrCode').innerHTML = '';
+        new QRCode(document.getElementById('printQrCode'), {
+            text: JSON.stringify(data),
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    });
+    
+    // Attach other event listeners
+    attachPoleBtnEventListeners();
+    attachComplaintBtnEventListeners();
+    
+    // Modal close buttons
+    closePrintModal.addEventListener('click', function() {
+        printModal.style.display = 'none';
+    });
+    
+    closeComplaintModal.addEventListener('click', function() {
+        viewComplaintModal.style.display = 'none';
+    });
+}
+
+// Initial setup
+initializeEventListeners();
+updatePolesTable();
+updateComplaintsTable();
+updateTasksTable();
+
+    </script>
+</body>
+</html>
